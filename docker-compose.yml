@@ -1,0 +1,35 @@
+name: sample
+services:
+  web:
+    image: nginx:latest
+    container_name: Nginx
+    ports:
+      - '80:80'
+    volumes:
+      - ./:/var/www/html
+      - ./docker/nginx.conf:/etc/nginx/conf.d/default.conf
+    links:
+      - php-fpm
+  php-fpm:
+    build: './docker/php-fpm'
+    container_name: PHP_FPM
+    volumes:
+      - ./:/var/www/html
+  db:
+    image: mysql:8
+    container_name: Database
+    command: ["mysqld", "--mysql-native-password=ON"]
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: sample
+      MYSQL_DATABASE: sample
+      MYSQL_USER: sample
+      MYSQL_PASSWORD: sample
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./docker/mysql.conf:/etc/mysql/conf.d/my.cnf
+
+volumes:
+  mysql_data:
